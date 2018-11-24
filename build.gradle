@@ -1,0 +1,51 @@
+plugins {
+    id 'java'
+}
+
+group 'ru.rt'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+ext {
+    vertxVersion = "3.6.0.CR1"
+    junitVersion = "4.12"
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs += 'src/main/generated'
+        }
+    }
+}
+
+dependencies {
+    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.7"
+    compile "io.vertx:vertx-config:$vertxVersion"
+    compile "io.vertx:vertx-core:$vertxVersion"
+    compile "io.vertx:vertx-rx-java2:$vertxVersion"
+    compile "io.vertx:vertx-web:$vertxVersion"
+    compileOnly "io.vertx:vertx-codegen:$vertxVersion"
+    testCompile "io.vertx:vertx-unit:$vertxVersion"
+    testCompile "junit:junit:$junitVersion"
+}
+
+task annotationProcessing(type: JavaCompile, group: 'build') {
+    source = sourceSets.main.java
+    classpath = configurations.compile + configurations.compileOnly
+    destinationDir = project.file('src/main/generated')
+    options.compilerArgs = [
+            "-proc:only",
+            "-processor", "io.vertx.codegen.CodeGenProcessor",
+            "-Acodegen.output=${project.projectDir}/src/main"
+    ]
+}
+
+compileJava {
+    dependsOn annotationProcessing
+}
