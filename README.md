@@ -1,4 +1,4 @@
-# easypeasy
+# easy-peasy
 Easy peasy service
 
 Runnable options: EasyPeasyVerticle.java
